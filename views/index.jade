@@ -6,6 +6,7 @@ html
             script(src='https://webrtc.voxbone.com/js/voxbone-0.0.2.js', type='text/javascript')
             script(src='https://webrtc.voxbone.com/js/jssip-0.3.0.js', type='text/javascript')
             script(src='http://code.jquery.com/jquery-latest.min.js', type='text/javascript')
+            script(src='http://cdnjs.cloudflare.com/ajax/libs/annyang/1.4.0/annyang.min.js', type='text/javascript')
             script(type='text/javascript').
                   var eventHandlers = {
                       'progress':   function(e){ document.getElementById("status_message").innerHTML="Calling " + document.getElementById('number').value;},
@@ -28,6 +29,26 @@ html
                       //voxbone.WebRTC.configuration.uri = "caller-id@voxbone.com";
                       //Bootstrap Voxbone WebRTC javascript object
                       voxbone.WebRTC.init(#{voxrtc_config});
+                      
+                      // Initialize Annyang
+                      if (annyang) {
+                          var commands = {
+                            'mute': function() {
+                              toggleMute();
+                            },
+                            'dial': function(){
+                                voxbone.WebRTC.call(document.getElementById(\'number\').value);
+                            },
+                            'hangup': function(){
+                                voxbone.WebRTC.hangup();
+                            }
+                          };
+                        
+                          // Add our commands to annyang
+                          annyang.addCommands(commands);
+                          // Start listening. You can call this here, or attach this call to an event, button, etc.
+                          annyang.start();
+                       }
                   }
                   /** Optional part, only use to play with mute **/
                   function toggleMute(){
